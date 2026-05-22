@@ -1,37 +1,33 @@
-
 import pandas as pd
-data=pd.read_csv("/home/user/Documents/heartdisease.csv")
-heart_disease=pd.DataFrame(data)
-print(heart_disease)
-from pgmpy.models import BayesianModel
-model=BayesianModel([
-('age','Lifestyle'),
-('Gender','Lifestyle'),
-('Family','heartdisease'),
-('diet','cholestrol'),
-('Lifestyle','diet'),
-('cholestrol','heartdisease'),
-('diet','cholestrol')])
-from pgmpy.estimators import MaximumLikelihoodEstimator
-model.fit(heart_disease, estimator=MaximumLikelihoodEstimator)
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn import metrics
 
-from pgmpy.inference import VariableElimination
-HeartDisease_infer = VariableElimination(model)
-print('For age Enter { SuperSeniorCitizen:0, SeniorCitizen:1, MiddleAged:2, Youth:3, Teen:4 }')
-print('For Gender Enter { Male:0, Female:1 }')
-print('For Family History Enter { yes:1, No:0 }')
-print('For diet Enter { High:0, Medium:1 }')
-print('For lifeStyle Enter { Athlete:0, Active:1, Moderate:2, Sedentary:3 }')
-print('For cholesterol Enter { High:0, BorderLine:1, Normal:2 }')
+# Load dataset (fix path)
+data = pd.read_csv(r"D:\Arr\ML-6\heartdisease.csv")
 
-q = HeartDisease_infer.query(variables=['heartdisease'], evidence={
-    'age':int(input('Enter age :')),
-    'Gender':int(input('Enter Gender :')),
-    'Family':int(input('Enter Family history :')),
-    'diet':int(input('Enter diet :')),
-    'Lifestyle':int(input('Enter Lifestyle :')),
-    'cholestrol':int(input('Enter cholestrol :'))
-    })
+# Features (X) and Target (Y)
+X = data.drop('heartdisease', axis=1)
+Y = data['heartdisease']
 
-print(q['heartdisease'])
+# Split data (train + test)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3,random_state=42)
 
+# Create model
+model = GaussianNB()
+
+# Train model
+model.fit(X_train, Y_train)
+
+# Predict
+Y_pred = model.predict(X_test)
+
+# Accuracy
+print("Accuracy:", metrics.accuracy_score(Y_test, Y_pred))
+
+# Test with custom input
+sample = pd.DataFrame([[2,1,1,0,1,1]], 
+                      columns=X.columns)  
+result = model.predict(sample)
+
+print("Prediction (0=No Disease, 1=Disease):", result[0])

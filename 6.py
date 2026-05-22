@@ -12,6 +12,7 @@ for i in range(num_iterations):
     error = y - output
     weights += learning_rate * np.dot(X.T, error)
     bias += learning_rate * np.sum(error)
+print(output)
 test_X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
 test_output = np.dot(test_X, weights) + bias
 test_output = np.where(test_output > 0, 1, 0)

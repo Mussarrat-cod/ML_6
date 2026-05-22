@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-data = pd.DataFrame(data=pd.read_csv('/home/user/Documents/trainingdata.csv'))
+data = pd.DataFrame(data=pd.read_csv('D:\Arr\ML-6\prg1.csv'))
 print(data)
 concepts = np.array(data.iloc[:,0:-1])
 print(concepts)
